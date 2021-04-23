@@ -1,3 +1,5 @@
+package com.github.vcoppe;
+
 import gurobi.GRBException;
 
 import java.io.File;
@@ -56,6 +58,12 @@ public class Main {
         int timeLimit = Integer.MAX_VALUE, threads = 0;
         if (args.length >= 2) timeLimit = Integer.parseInt(args[1]);
         if (args.length == 3) threads = Integer.parseInt(args[2]);
+
+        if (args[0].contains("Cl")) {
+            for (int i=0; i<n; i++) {
+                l[i] += 10;
+            }
+        }
 
         Model mip = new Model(n, l, c);
 

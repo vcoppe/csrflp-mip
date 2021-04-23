@@ -1,3 +1,5 @@
+package com.github.vcoppe;
+
 import gurobi.*;
 
 public class Model {
