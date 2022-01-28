@@ -2,15 +2,34 @@ package com.github.vcoppe;
 
 import gurobi.*;
 
+import java.util.ArrayList;
+
 public class Model {
 
     private GRBEnv env;
     private GRBModel model;
     private GRBVar[][][] z;
 
-    public Model(int n, int[] l, int[][] c) throws GRBException {
+    private final int START, END;
+
+    public Model(int n, int[] lengths, int[][] costs, ArrayList<Pair> p, ArrayList<Pair> o, ArrayList<Pair> r) throws GRBException {
         env = new GRBEnv("srflp.log");
         model = new GRBModel(env);
+
+        // create 2 dummy variables for start and end departments
+        START = n;
+        END = n+1;
+
+        int[] l = new int[n+2];
+        int[][] c = new int[n+2][n+2];
+
+        for (int i=0; i<n; i++) {
+            l[i] = lengths[i];
+            for (int j=0; j<n; j++) {
+                c[i][j] = costs[i][j];
+            }
+        }
+        n = n + 2;
 
         z = new GRBVar[n][n][n];
 
@@ -31,7 +50,7 @@ public class Model {
 
         GRBLinExpr expr;
         for (int i=0; i<n; i++) {
-            for (int j=i+1; j<n; j++) {
+            for (int j=0; j<n; j++) if (i != j) {
                 for (int k=0; k<n; k++) if (k != i && k != j) {
                     model.addConstr(z[i][j][k], GRB.EQUAL, z[j][i][k], "equal_"+i+"_"+j+"_"+k);
 
@@ -61,6 +80,75 @@ public class Model {
                         model.addConstr(expr, GRB.LESS_EQUAL, 2, "exclusive_"+i+"_"+j+"_"+k+"_"+d);
                     }
                 }
+            }
+        }
+
+        // add constraints to start and end departments
+        for (int i=0; i<START; i++) {
+            for (int j=i+1; j<START; j++) if (i != j) {
+                model.addConstr(z[i][j][START], GRB.EQUAL, 0, "start_not_between_"+i+"_"+j);
+                model.addConstr(z[i][j][END], GRB.EQUAL, 0, "end_not_between_"+i+"_"+j);
+
+                /*model.addConstr(z[START][i][j], GRB.EQUAL, z[j][END][i], "triangle_1_"+i+"_"+j);
+
+                expr = new GRBLinExpr();
+                expr.addTerm(1, z[START][i][j]);
+                expr.addTerm(1, z[i][END][j]);
+                model.addConstr(expr, GRB.EQUAL, 1, "triangle_2_"+i+"_"+j);*/
+            }
+
+            model.addConstr(z[START][END][i], GRB.EQUAL, 1, "between_start_end_"+i);
+            model.addConstr(z[END][START][i], GRB.EQUAL, 1, "between_end_start_"+i);
+
+            /*model.addConstr(z[START][i][END], GRB.EQUAL, 0, "end_not_between_start_"+i);
+            model.addConstr(z[i][START][END], GRB.EQUAL, 0, "end_not_between_"+i+"_start");
+
+            model.addConstr(z[END][i][START], GRB.EQUAL, 0, "start_not_between_end_"+i);
+            model.addConstr(z[i][END][START], GRB.EQUAL, 0, "start_not_between_"+i+"_end");*/
+        }
+
+        // add positional constraints
+        for (Pair pair : p) {
+            int dep = pair.first;
+            int pos = pair.second;
+
+            expr = new GRBLinExpr();
+            for (int k=0; k<START; k++) {
+                expr.addTerm(1, z[START][dep][k]);
+            }
+            model.addConstr(expr, GRB.EQUAL, pos, "pos_start_"+dep);
+
+            expr = new GRBLinExpr();
+            for (int k=0; k<START; k++) {
+                expr.addTerm(1, z[dep][END][k]);
+            }
+            model.addConstr(expr, GRB.EQUAL, (n-2)-pos-1, "pos_end_"+dep);
+        }
+
+        // add ordering constraints
+        for (Pair pair : o) {
+            int dep1 = pair.first;
+            int dep2 = pair.second;
+
+            model.addConstr(z[START][dep1][dep2], GRB.EQUAL, 0, "ord_start_a_"+dep1+"_"+dep2);
+            model.addConstr(z[START][dep2][dep1], GRB.EQUAL, 1, "ord_start_b_"+dep1+"_"+dep2);
+            model.addConstr(z[dep1][END][dep2], GRB.EQUAL, 1, "ord_end_a_"+dep1+"_"+dep2);
+            model.addConstr(z[dep2][END][dep1], GRB.EQUAL, 0, "ord_end_b_"+dep1+"_"+dep2);
+        }
+
+        // add relation constraints
+        for (Pair pair : r) {
+            int dep1 = pair.first;
+            int dep2 = pair.second;
+
+            // same than ordering
+            model.addConstr(z[START][dep1][dep2], GRB.EQUAL, 0, "rel_start_a_"+dep1+"_"+dep2);
+            model.addConstr(z[START][dep2][dep1], GRB.EQUAL, 1, "rel_start_b_"+dep1+"_"+dep2);
+            model.addConstr(z[dep1][END][dep2], GRB.EQUAL, 1, "rel_end_a_"+dep1+"_"+dep2);
+            model.addConstr(z[dep2][END][dep1], GRB.EQUAL, 0, "rel_end_b_"+dep1+"_"+dep2);
+
+            for (int k=0; k<START; k++) if (k != dep1 && k != dep2) {
+                model.addConstr(z[dep1][dep2][k], GRB.EQUAL, 0, "rel_between_"+dep1+"_"+dep2);
             }
         }
     }

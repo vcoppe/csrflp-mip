@@ -3,6 +3,7 @@ package com.github.vcoppe;
 import gurobi.GRBException;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
@@ -10,6 +11,7 @@ public class Main {
     private static int n = -1;
     private static int[] l;
     private static int[][] c;
+    private static ArrayList<Pair> p, o, r;
 
     private static void read(String path) {
         try {
@@ -47,17 +49,59 @@ public class Main {
         }
     }
 
+    private static void readConstraints(String path) {
+        try {
+            Scanner scan = new Scanner(new File(path));
+
+            p = new ArrayList<Pair>();
+            o = new ArrayList<Pair>();
+            r = new ArrayList<Pair>();
+
+            int np = scan.nextInt();
+            int no = scan.nextInt();
+            int nr = scan.nextInt();
+
+            int a, b;
+            for (int i=0; i<np; i++) {
+                a = scan.nextInt();
+                b = scan.nextInt();
+                p.add(new Pair(a, b));
+            }
+
+            for (int i=0; i<no; i++) {
+                a = scan.nextInt();
+                b = scan.nextInt();
+                o.add(new Pair(a, b));
+            }
+
+            for (int i=0; i<nr; i++) {
+                a = scan.nextInt();
+                b = scan.nextInt();
+                r.add(new Pair(a, b));
+            }
+
+            scan.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Failed to read constraints file");
+            System.exit(0);
+        }
+    }
+
     public static void main(String[] args) throws GRBException {
         if (args.length < 1) {
-            System.out.println("Arguments needed :\n\tfilename\n\t[timeLimit]\n\t[threads]");
+            System.out.println("Arguments needed :\n\tfilename\n\t[--time timeLimit]\n\t[--threads threads]\n\t[--constraints filename]");
             return;
         }
 
         read(args[0]);
 
         int timeLimit = Integer.MAX_VALUE, threads = 0;
-        if (args.length >= 2) timeLimit = Integer.parseInt(args[1]);
-        if (args.length == 3) threads = Integer.parseInt(args[2]);
+        for (int i=1; i<args.length; i++) {
+            if (args[i].equals("--time")) timeLimit = Integer.parseInt(args[i+1]);
+            if (args[i].equals("--threads")) threads = Integer.parseInt(args[i+1]);
+            if (args[i].equals("--constraints")) readConstraints(args[i+1]);
+        }
 
         if (args[0].contains("Cl")) {
             for (int i=0; i<n; i++) {
@@ -65,7 +109,7 @@ public class Main {
             }
         }
 
-        Model mip = new Model(n, l, c);
+        Model mip = new Model(n, l, c, p, o, r);
 
         System.out.println("MIP model created");
         System.out.println("Solving...");
