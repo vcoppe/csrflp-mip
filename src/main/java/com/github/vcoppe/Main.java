@@ -11,7 +11,8 @@ public class Main {
     private static int n = -1;
     private static int[] l;
     private static int[][] c;
-    private static ArrayList<Pair> p, o, r;
+    private static ArrayList<Pair> p = new ArrayList<Pair>(), o = new ArrayList<Pair>(), r = new ArrayList<Pair>();
+    private static boolean modelAmaral = true;
 
     private static void read(String path) {
         try {
@@ -52,10 +53,6 @@ public class Main {
     private static void readConstraints(String path) {
         try {
             Scanner scan = new Scanner(new File(path));
-
-            p = new ArrayList<Pair>();
-            o = new ArrayList<Pair>();
-            r = new ArrayList<Pair>();
 
             int np = scan.nextInt();
             int no = scan.nextInt();
@@ -101,6 +98,7 @@ public class Main {
             if (args[i].equals("--time")) timeLimit = Integer.parseInt(args[i+1]);
             if (args[i].equals("--threads")) threads = Integer.parseInt(args[i+1]);
             if (args[i].equals("--constraints")) readConstraints(args[i+1]);
+            if (args[i].equals("--liu")) modelAmaral = false;
         }
 
         if (args[0].contains("Cl")) {
@@ -109,7 +107,7 @@ public class Main {
             }
         }
 
-        Model mip = new Model(n, l, c, p, o, r);
+        Model mip = modelAmaral ? new ModelAmaral(n, l, c, p, o, r) : new ModelLiu(n, l, c, p, o, r);
 
         System.out.println("MIP model created");
         System.out.println("Solving...");
