@@ -11,7 +11,7 @@ public class Main {
     private static int n = -1;
     private static int[] l;
     private static int[][] c;
-    private static ArrayList<Pair> p = new ArrayList<Pair>(), o = new ArrayList<Pair>(), r = new ArrayList<Pair>();
+    private static final ArrayList<Pair> p = new ArrayList<>(), o = new ArrayList<>(), r = new ArrayList<>();
     private static boolean modelAmaral = true;
 
     private static void read(String path) {
@@ -87,7 +87,7 @@ public class Main {
 
     public static void main(String[] args) throws GRBException {
         if (args.length < 1) {
-            System.out.println("Arguments needed :\n\tfilename\n\t[--time timeLimit]\n\t[--threads threads]\n\t[--constraints filename]");
+            System.out.println("Arguments needed :\n\tfilename\n\t[--time timeLimit]\n\t[--threads threads]\n\t[--constraints filename]\n\t[--liu]");
             return;
         }
 

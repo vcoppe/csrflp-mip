@@ -6,8 +6,8 @@ import java.util.ArrayList;
 
 public class ModelLiu extends Model {
 
-    private GRBVar[] x;
-    private GRBVar[][] d, y, a;
+    private final GRBVar[] x;
+    private final GRBVar[][] d, y, a;
 
     public ModelLiu(int n, int[] l, int[][] c, ArrayList<Pair> p, ArrayList<Pair> o, ArrayList<Pair> r) throws GRBException {
         super();

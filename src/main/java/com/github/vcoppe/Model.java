@@ -7,7 +7,7 @@ import gurobi.GRBModel;
 
 public abstract class Model {
 
-    private GRBEnv env;
+    private final GRBEnv env;
     protected GRBModel model;
 
     public Model() throws GRBException {

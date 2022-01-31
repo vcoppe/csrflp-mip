@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public class ModelAmaral extends Model {
 
-    private GRBVar[][][] z;
+    private final GRBVar[][][] z;
 
     private final int START, END;
 
