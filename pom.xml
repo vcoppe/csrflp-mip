@@ -11,16 +11,15 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>6</java.version>
-        <gurobi.home>/Library/gurobi901/mac64</gurobi.home>
     </properties>
 
     <dependencies>
         <dependency>
-            <groupId>com.gurobi</groupId>
+            <groupId>gurobi</groupId>
             <artifactId>gurobi</artifactId>
             <version>9.01</version>
             <scope>system</scope>
-            <systemPath>${gurobi.home}/lib/gurobi.jar</systemPath>
+            <systemPath>${project.basedir}/gurobi.jar</systemPath>
         </dependency>
     </dependencies>
 

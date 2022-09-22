@@ -66,6 +66,7 @@ public class Model {
     }
 
     public void solve(double timeLimit, int threads) throws GRBException {
+        model.set(GRB.IntParam.OutputFlag, 0);
         model.set(GRB.DoubleParam.TimeLimit, timeLimit);
         if (threads > 0) model.set(GRB.IntParam.Threads, threads);
         model.optimize();
@@ -81,6 +82,10 @@ public class Model {
 
     public double objVal() throws GRBException {
         return model.get(GRB.DoubleAttr.ObjVal);
+    }
+
+    public double lowerBound() throws GRBException {
+        return model.get(GRB.DoubleAttr.ObjBound);
     }
 
     public void dispose() throws GRBException {

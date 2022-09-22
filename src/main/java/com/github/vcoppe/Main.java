@@ -3,6 +3,7 @@ package com.github.vcoppe;
 import gurobi.GRBException;
 
 import java.io.File;
+import java.util.Locale;
 import java.util.Scanner;
 
 public class Main {
@@ -39,6 +40,12 @@ public class Main {
                 }
             }
 
+            for (int i = 0; i < n; i++) for (int j = i + 1; j < n; j++) {
+                if (c[i][j] != c[j][i]) {
+                    c[i][j] = c[j][i] = c[i][j] + c[j][i];
+                }
+            }
+
             scan.close();
         } catch (Exception e) {
             e.printStackTrace();
@@ -59,22 +66,29 @@ public class Main {
         if (args.length >= 2) timeLimit = Integer.parseInt(args[1]);
         if (args.length == 3) threads = Integer.parseInt(args[2]);
 
-        if (args[0].contains("Cl")) {
-            for (int i=0; i<n; i++) {
-                l[i] += 10;
-            }
+        double K = 0;
+        for (int i = 0; i < n; i++) for (int j = 0; j < n; j++) {
+            K += 0.5 * l[i] * c[i][j];
         }
 
         Model mip = new Model(n, l, c);
 
-        System.out.println("MIP model created");
-        System.out.println("Solving...");
-
         mip.solve(timeLimit, threads);
 
-        System.out.println("runTime          : " + mip.runTime());
-        System.out.println("objValue         : " + mip.objVal());
-        System.out.println("gap              : " + mip.gap());
+        String[] split = args[0].split("/");
+        String instance = split[split.length - 1];
+
+        Locale.setDefault(Locale.US);
+
+        System.out.printf("%s | mip | %s | %.2f | 0 | %d | %d | %d | %.4f\n",
+                instance,
+                mip.gap() == 0 ? "Proved" : "Timeout",
+                mip.runTime(),
+                (int) - (mip.objVal() - K),
+                (int) - (mip.objVal() - K),
+                (int) - (mip.lowerBound() - K),
+                mip.gap()
+        );
 
         mip.dispose();
     }
