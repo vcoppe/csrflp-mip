@@ -84,7 +84,7 @@ public class Main {
         int bestBound = (int) - Math.round(mip.lowerBound());
         System.out.printf("%s | mip | %s | %.2f | 0 | %d | %d | %d | %.4f\n",
                 instance,
-                objVal == bestBound ? "Proved" : "Timeout",
+                mip.hasProved() ? "Proved" : "Timeout",
                 mip.runTime(),
                 objVal,
                 objVal,

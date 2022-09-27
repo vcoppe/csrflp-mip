@@ -88,6 +88,10 @@ public class Model {
         return model.get(GRB.DoubleAttr.ObjBound);
     }
 
+    public boolean hasProved() throws GRBException {
+        return model.get(GRB.IntAttr.Status) == GRB.OPTIMAL;
+    }
+
     public void dispose() throws GRBException {
         model.dispose();
         env.dispose();
