@@ -67,8 +67,8 @@ public class Main {
         if (args.length == 3) threads = Integer.parseInt(args[2]);
 
         double K = 0;
-        for (int i = 0; i < n; i++) for (int j = 0; j < n; j++) {
-            K += 0.5 * l[i] * c[i][j];
+        for (int i = 0; i < n; i++) for (int j = i + 1; j < n; j++) {
+            K += 0.5 * (l[i] + l[j]) * c[i][j];
         }
 
         Model mip = new Model(n, l, c);
@@ -80,13 +80,15 @@ public class Main {
 
         Locale.setDefault(Locale.US);
 
+        int objVal = (int) - Math.round(mip.objVal());
+        int bestBound = (int) - Math.round(mip.lowerBound());
         System.out.printf("%s | mip | %s | %.2f | 0 | %d | %d | %d | %.4f\n",
                 instance,
-                mip.gap() == 0 ? "Proved" : "Timeout",
+                objVal == bestBound ? "Proved" : "Timeout",
                 mip.runTime(),
-                (int) - (mip.objVal() - K),
-                (int) - (mip.objVal() - K),
-                (int) - (mip.lowerBound() - K),
+                objVal,
+                objVal,
+                bestBound,
                 mip.gap()
         );
 
