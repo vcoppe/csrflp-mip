@@ -67,6 +67,9 @@ public class Model {
 
     public void solve(double timeLimit, int threads) throws GRBException {
         model.set(GRB.IntParam.OutputFlag, 0);
+        model.set(GRB.DoubleParam.FeasibilityTol, 1e-9);
+        model.set(GRB.DoubleParam.IntFeasTol, 1e-9);
+        model.set(GRB.DoubleParam.OptimalityTol, 1e-9);
         model.set(GRB.DoubleParam.TimeLimit, timeLimit);
         if (threads > 0) model.set(GRB.IntParam.Threads, threads);
         model.optimize();

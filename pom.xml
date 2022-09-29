@@ -11,14 +11,14 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>7</java.version>
-        <gurobi.home>/Library/gurobi912/mac64</gurobi.home>
+        <gurobi.home>/Library/gurobi952/macos_universal2</gurobi.home>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>gurobi</groupId>
             <artifactId>gurobi</artifactId>
-            <version>9.12</version>
+            <version>9.52</version>
             <scope>system</scope>
             <systemPath>${gurobi.home}/lib/gurobi.jar</systemPath>
         </dependency>
