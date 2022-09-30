@@ -80,8 +80,8 @@ public class Main {
 
         Locale.setDefault(Locale.US);
 
-        int objVal = (int) - Math.round(mip.objVal());
-        int bestBound = (int) - Math.round(mip.lowerBound());
+        int objVal = (int) - Math.round(mip.objVal() - K);
+        int bestBound = (int) - Math.round(mip.lowerBound() - K);
         System.out.printf("%s | mip | %s | %.2f | 0 | %d | %d | %d | %.4f\n",
                 instance,
                 mip.hasProved() ? "Proved" : "Timeout",
