@@ -111,22 +111,26 @@ public class Main {
 
         mip.solve(timeLimit, threads);
 
-        String[] split = args[0].split("/");
-        String instance = split[split.length - 1];
-
         Locale.setDefault(Locale.US);
 
         int objVal = (int) - Math.round(mip.objVal() - K);
         int bestBound = (int) - Math.round(mip.lowerBound() - K);
-        System.out.printf("%s | mip | %s | %.2f | 0 | %d | %d | %d | %.4f\n",
-                instance,
-                mip.hasProved() ? "Proved" : "Timeout",
-                mip.runTime(),
-                objVal,
-                objVal,
-                bestBound,
-                mip.gap()
-        );
+        System.out.printf("solver     : %s\n", "mip_" + (modelAmaral ? "amaral" : "liu"));
+        System.out.printf("threads    : %d\n", threads);
+        System.out.println("width      : 0");
+        System.out.println("caching    : false");
+        System.out.println("dominance  : false");
+        System.out.println("cmpr. bound: false");
+        System.out.println("cmpr. heu. : false");
+        System.out.println("cmpr. width: 0");
+        System.out.println("nb clusters: 0");
+        System.out.printf("is exact   : %b\n", mip.hasProved());
+        System.out.printf("duration   : %f\n", mip.runTime());
+        System.out.printf("best value : %d\n", - objVal);
+        System.out.printf("best bound : %d\n", - bestBound);
+        System.out.println("expl. b&b  : 0");
+        System.out.println("expl. dd   : 0");
+        System.out.println("peak mem.  : 0");
 
         mip.dispose();
     }
