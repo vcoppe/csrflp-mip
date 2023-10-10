@@ -104,17 +104,12 @@ public class Main {
 
         Model mip = modelAmaral ? new ModelAmaral(n, l, c, p, o, r) : new ModelLiu(n, l, c, p, o, r);
 
-        double K = 0;
-        for (int i = 0; i < n; i++) for (int j = i + 1; j < n; j++) {
-            K += 0.5 * (l[i] + l[j]) * c[i][j];
-        }
-
         mip.solve(timeLimit, threads);
 
         Locale.setDefault(Locale.US);
 
-        int objVal = (int) - Math.round(mip.objVal() - K);
-        int bestBound = (int) - Math.round(mip.lowerBound() - K);
+        int objVal = (int) Math.round(mip.objVal());
+        int bestBound = (int) Math.round(mip.lowerBound());
         System.out.printf("solver     : %s\n", "mip_" + (modelAmaral ? "amaral" : "liu"));
         System.out.printf("threads    : %d\n", threads);
         System.out.println("width      : 0");
@@ -125,9 +120,9 @@ public class Main {
         System.out.println("cmpr. width: 0");
         System.out.println("nb clusters: 0");
         System.out.printf("is exact   : %b\n", mip.hasProved());
-        System.out.printf("duration   : %f\n", mip.runTime());
-        System.out.printf("best value : %d\n", - objVal);
-        System.out.printf("best bound : %d\n", - bestBound);
+        System.out.printf("duration   : %f seconds\n", mip.runTime());
+        System.out.printf("best value : %d\n", objVal);
+        System.out.printf("best bound : %d\n", bestBound);
         System.out.println("expl. b&b  : 0");
         System.out.println("expl. dd   : 0");
         System.out.println("peak mem.  : 0");
