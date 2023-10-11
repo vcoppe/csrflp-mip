@@ -43,6 +43,10 @@ public class Main {
                 }
             }
 
+            if (path.contains("Cl")) {
+                for (int i = 0; i < n; i++) l[i] += 10;
+            }
+
             scan.close();
         } catch (Exception e) {
             e.printStackTrace();
@@ -108,8 +112,6 @@ public class Main {
 
         Locale.setDefault(Locale.US);
 
-        int objVal = (int) Math.round(mip.objVal());
-        int bestBound = (int) Math.round(mip.lowerBound());
         System.out.printf("solver     : %s\n", "mip_" + (modelAmaral ? "amaral" : "liu"));
         System.out.printf("threads    : %d\n", threads);
         System.out.println("width      : 0");
@@ -121,8 +123,8 @@ public class Main {
         System.out.println("nb clusters: 0");
         System.out.printf("is exact   : %b\n", mip.hasProved());
         System.out.printf("duration   : %f seconds\n", mip.runTime());
-        System.out.printf("best value : %d\n", objVal);
-        System.out.printf("best bound : %d\n", bestBound);
+        System.out.printf("best value : %f\n", mip.objVal());
+        System.out.printf("best bound : %f\n", mip.lowerBound());
         System.out.println("expl. b&b  : 0");
         System.out.println("expl. dd   : 0");
         System.out.println("peak mem.  : 0");
